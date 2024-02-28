@@ -26,7 +26,7 @@ public class BookStoreApplication {
                 Book harryPotter = new Book();
                 harryPotter.setAuthor("\tJ. K. Rowling");
                 harryPotter.setPrice(new BigDecimal(100));
-                harryPotter.setIsbn("1234753");
+                harryPotter.setIsbn("1234653");
                 harryPotter.setTitle("Harry Potter and the Philosopher's Stone");
                 productService.save(harryPotter);
                 System.out.println(productService.findAll());
