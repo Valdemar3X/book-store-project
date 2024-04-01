@@ -10,6 +10,7 @@ import mate.academy.bookstore.mapper.BookMapper;
 import mate.academy.bookstore.model.Book;
 import mate.academy.bookstore.repository.book.BookRepository;
 import mate.academy.bookstore.repository.book.BookSpecificationBuilder;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
@@ -29,8 +30,9 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public List<BookDto> getAll() {
-        return bookRepository.findAll().stream().map(book -> bookMapper.toDto(book)).toList();
+    public List<BookDto> getAll(Pageable pageable) {
+        return bookRepository.findAll(pageable).stream()
+                .map(book -> bookMapper.toDto(book)).toList();
     }
 
     @Override
