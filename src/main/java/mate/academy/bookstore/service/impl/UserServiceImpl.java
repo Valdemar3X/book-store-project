@@ -22,12 +22,7 @@ public class UserServiceImpl implements UserService {
         if (repository.findByEmail(request.getEmail()).isPresent()) {
             throw new RegistrationException("Unable to complete registration.");
         }
-        User user = new User();
-        user.setEmail(request.getEmail());
-        user.setPassword(request.getPassword());
-        user.setFirstName(request.getFirstName());
-        user.setLastName(request.getLastName());
-        user.setShippingAddress(request.getShippingAddress());
+        User user = mapper.toModel(request);
         User savedUser = repository.save(user);
         return mapper.toUserResponse(savedUser);
     }
