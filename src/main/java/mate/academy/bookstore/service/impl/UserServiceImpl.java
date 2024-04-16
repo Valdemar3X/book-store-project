@@ -12,9 +12,9 @@ import mate.academy.bookstore.repository.role.RoleRepository;
 import mate.academy.bookstore.repository.user.UserRepository;
 import mate.academy.bookstore.service.UserService;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
-@Component
+@Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
