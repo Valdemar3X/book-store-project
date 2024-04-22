@@ -5,7 +5,6 @@ import mate.academy.bookstore.dto.user.UserRegistrationRequestDto;
 import mate.academy.bookstore.dto.user.UserResponseDto;
 import mate.academy.bookstore.exception.RegistrationException;
 import mate.academy.bookstore.mapper.UserMapper;
-import mate.academy.bookstore.model.Role;
 import mate.academy.bookstore.model.User;
 import mate.academy.bookstore.repository.role.RoleRepository;
 import mate.academy.bookstore.repository.user.UserRepository;
@@ -17,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
+    private static final String ROLE_NAME = "USER";
     private final UserRepository userRepository;
     private final UserMapper mapper;
     private final RoleRepository roleRepository;
@@ -30,17 +30,8 @@ public class UserServiceImpl implements UserService {
             throw new RegistrationException("Unable to complete registration.");
         }
         User user = mapper.toModel(request,
-                passwordEncoder, getUserRole((Role.RoleName.USER)));
+                passwordEncoder, roleRepository.findRoleByName(ROLE_NAME).get());
         User savedUser = userRepository.save(user);
         return mapper.toUserResponse(savedUser);
-    }
-
-    private Role getUserRole(Role.RoleName name) {
-        return roleRepository.getRoleByName(name)
-                .orElseGet(() -> {
-                    Role role = new Role();
-                    role.setName(name);
-                    return roleRepository.save(role);
-                });
     }
 }

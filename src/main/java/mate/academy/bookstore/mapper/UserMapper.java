@@ -23,7 +23,7 @@ public interface UserMapper {
             user.setEmail(requestDto.getEmail());
         }
         if (requestDto.getPassword() != null) {
-            user.setPassword(requestDto.getPassword());
+            user.setPassword(passwordEncoder.encode(requestDto.getPassword()));
         }
         if (requestDto.getFirstName() != null) {
             user.setFirstName(requestDto.getFirstName());
@@ -33,9 +33,6 @@ public interface UserMapper {
         }
         if (requestDto.getShippingAddress() != null) {
             user.setShippingAddress(requestDto.getShippingAddress());
-        }
-        if (requestDto.getPassword() != null) {
-            user.setPassword(passwordEncoder.encode(user.getPassword()));
         }
         user.setRoles(Set.of(role));
         return user;
