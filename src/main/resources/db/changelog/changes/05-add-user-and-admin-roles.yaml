@@ -1,0 +1,19 @@
+  databaseChangeLog:
+  - changeSet:
+      id: add-user-and-admin-roles
+      author: volodymyr shashkov
+      changes:
+      - insert:
+         tableName: roles
+         columns:
+         - column:
+            name: name
+            value: "USER"
+      - insert:
+         tableName: roles
+         columns:
+         - column:
+             name: name
+             value: "ADMIN"
+
+
