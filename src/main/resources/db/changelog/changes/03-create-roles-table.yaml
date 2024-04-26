@@ -15,7 +15,7 @@ databaseChangeLog:
                     nullable: false
               - column:
                   name: name
-                  type: varchar(255)
+                  type: enum('USER', 'ADMIN')
                   constraints:
                     unique: true
                     nullable: false
