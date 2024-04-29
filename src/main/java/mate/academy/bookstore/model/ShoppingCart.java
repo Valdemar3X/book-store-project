@@ -2,6 +2,7 @@ package mate.academy.bookstore.model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -12,6 +13,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.PrimaryKeyJoinColumn;
 import jakarta.persistence.Table;
+import java.util.HashSet;
 import java.util.Set;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -38,11 +40,11 @@ public class ShoppingCart {
 
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
-    @OneToMany
+    @OneToMany(fetch = FetchType.EAGER) // ?????
     @JoinTable(name = "shopping_carts_cart_items",
             joinColumns = @JoinColumn(name = "shopping_cart_id"),
             inverseJoinColumns = @JoinColumn(name = "cart_item_id"))
-    private Set<CartItem> cartItems;
+    private Set<CartItem> cartItems = new HashSet<>();
 
     @Column(name = "is_deleted")
     private boolean isDeleted;

@@ -9,4 +9,5 @@ public interface UserService {
     UserResponseDto register(UserRegistrationRequestDto request) throws RegistrationException;
 
     User findUserByEmail(String email);
+
 }

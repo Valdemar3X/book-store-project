@@ -3,7 +3,7 @@ package mate.academy.bookstore.mapper;
 import mate.academy.bookstore.config.MapperConfig;
 import mate.academy.bookstore.dto.cartitem.CartItemRequestDto;
 import mate.academy.bookstore.dto.cartitem.CartItemResponseDto;
-import mate.academy.bookstore.dto.cartitem.CartItemUpdateDto;
+import mate.academy.bookstore.dto.cartitem.CartItemUpdateRequestDto;
 import mate.academy.bookstore.model.CartItem;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -15,7 +15,7 @@ public interface CartItemMapper {
             qualifiedByName = "bookFromId")
     CartItem toModel(CartItemRequestDto requestDto);
 
-    CartItem updateEntity(CartItemUpdateDto requestDto);
+    CartItem updateEntity(CartItemUpdateRequestDto requestDto);
 
     @Mapping(source = "book.id", target = "bookId")
     @Mapping(source = "book.title", target = "bookTitle")

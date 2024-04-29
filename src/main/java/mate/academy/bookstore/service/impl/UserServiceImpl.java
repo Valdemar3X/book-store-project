@@ -8,8 +8,10 @@ import mate.academy.bookstore.exception.EntityNotFoundException;
 import mate.academy.bookstore.exception.RegistrationException;
 import mate.academy.bookstore.mapper.UserMapper;
 import mate.academy.bookstore.model.Role;
+import mate.academy.bookstore.model.ShoppingCart;
 import mate.academy.bookstore.model.User;
 import mate.academy.bookstore.repository.role.RoleRepository;
+import mate.academy.bookstore.repository.shopingcart.ShoppingCartRepository;
 import mate.academy.bookstore.repository.user.UserRepository;
 import mate.academy.bookstore.service.UserService;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -23,6 +25,7 @@ public class UserServiceImpl implements UserService {
     private final UserMapper mapper;
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
+    private final ShoppingCartRepository shoppingCartRepository;
 
     @Transactional
     @Override
@@ -35,8 +38,10 @@ public class UserServiceImpl implements UserService {
         user.setPassword(passwordEncoder.encode(request.getPassword()));
         user.setRoles(Set.of(roleRepository
                 .findRoleByName(Role.RoleName.USER).get()));
-
         User savedUser = userRepository.save(user);
+        ShoppingCart shoppingCart = new ShoppingCart();
+        shoppingCart.setUser(user);
+        shoppingCartRepository.save(shoppingCart);
         return mapper.toUserResponse(savedUser);
     }
 
