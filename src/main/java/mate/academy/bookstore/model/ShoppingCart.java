@@ -6,8 +6,6 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
 import jakarta.persistence.MapsId;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
@@ -40,10 +38,7 @@ public class ShoppingCart {
 
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
-    @OneToMany(fetch = FetchType.EAGER) // ?????
-    @JoinTable(name = "shopping_carts_cart_items",
-            joinColumns = @JoinColumn(name = "shopping_cart_id"),
-            inverseJoinColumns = @JoinColumn(name = "cart_item_id"))
+    @OneToMany(mappedBy = "shoppingCart", fetch = FetchType.EAGER)
     private Set<CartItem> cartItems = new HashSet<>();
 
     @Column(name = "is_deleted")
