@@ -51,5 +51,4 @@ public interface BookMapper {
                 .map(Book::new)
                 .orElse(null);
     }
-
 }

@@ -47,12 +47,6 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
         shoppingCartRepository.save(shoppingCart);
     }
 
-    private void addItemToCart(CartItem cartItem, ShoppingCart shoppingCart) {
-        cartItem.setShoppingCart(shoppingCart);
-        cartItemRepository.save(cartItem);
-        shoppingCart.getCartItems().add(cartItem);
-    }
-
     @Override
     @Transactional
     public void updateItem(
@@ -76,4 +70,9 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
         cartItemRepository.deleteById(id);
     }
 
+    private void addItemToCart(CartItem cartItem, ShoppingCart shoppingCart) {
+        cartItem.setShoppingCart(shoppingCart);
+        cartItemRepository.save(cartItem);
+        shoppingCart.getCartItems().add(cartItem);
+    }
 }

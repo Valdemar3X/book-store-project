@@ -15,5 +15,5 @@ public interface ShoppingCartService {
             CartItemUpdateRequestDto requestDto);
 
     void deleteItem(Long id);
-
 }
+
