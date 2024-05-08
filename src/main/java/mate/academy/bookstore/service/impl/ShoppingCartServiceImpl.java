@@ -2,6 +2,7 @@ package mate.academy.bookstore.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import mate.academy.bookstore.dto.cartitem.CartItemRequestDto;
+import mate.academy.bookstore.dto.cartitem.CartItemResponseDto;
 import mate.academy.bookstore.dto.cartitem.CartItemUpdateRequestDto;
 import mate.academy.bookstore.dto.shopingcart.ShoppingCartDto;
 import mate.academy.bookstore.exception.EntityNotFoundException;
@@ -49,7 +50,7 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
 
     @Override
     @Transactional
-    public void updateItem(
+    public CartItemResponseDto updateItem(
             Long userId,
             Long id,
             CartItemUpdateRequestDto requestDto) {
@@ -62,7 +63,8 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
                 .orElseThrow(() -> new EntityNotFoundException(
                         "can't find item by id: " + id));
         cartItem.setQuantity(requestDto.getQuantity());
-        cartItemRepository.save(cartItem);
+        CartItem savedItem = cartItemRepository.save(cartItem);
+        return cartItemMapper.toDto(savedItem);
     }
 
     @Override

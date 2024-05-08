@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import mate.academy.bookstore.dto.cartitem.CartItemRequestDto;
+import mate.academy.bookstore.dto.cartitem.CartItemResponseDto;
 import mate.academy.bookstore.dto.cartitem.CartItemUpdateRequestDto;
 import mate.academy.bookstore.dto.shopingcart.ShoppingCartDto;
 import mate.academy.bookstore.model.User;
@@ -51,12 +52,12 @@ public class ShoppingCartController {
             description = "Update quantity of a book in the shopping cart")
     @PreAuthorize("hasRole('USER')")
     @PutMapping("/cart-items/{cartItemId}")
-    public void updateItemInCart(
+    public CartItemResponseDto updateItemInCart(
             Authentication authentication,
             @PathVariable Long cartItemId,
             @RequestBody @Valid CartItemUpdateRequestDto requestDto) {
         User user = (User) authentication.getPrincipal();
-        shoppingCartService.updateItem(
+        return shoppingCartService.updateItem(
                         user.getId(),
                         cartItemId,
                         requestDto);
