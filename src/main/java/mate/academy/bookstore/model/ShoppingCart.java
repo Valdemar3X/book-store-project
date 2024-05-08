@@ -9,8 +9,9 @@ import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import java.util.HashSet;
 import java.util.Set;
-import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
@@ -19,7 +20,8 @@ import org.hibernate.annotations.Where;
 @Table(name = "shopping_carts")
 @SQLDelete(sql = "UPDATE shopping_cart SET is_deleted = TRUE WHERE id=?")
 @Where(clause = "is_deleted=FALSE")
-@Data
+@Getter
+@Setter
 public class ShoppingCart {
     @Id
     private Long id;

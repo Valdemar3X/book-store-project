@@ -8,5 +8,3 @@ public class CartItemUpdateRequestDto {
     @Positive
     private int quantity;
 }
-
-
