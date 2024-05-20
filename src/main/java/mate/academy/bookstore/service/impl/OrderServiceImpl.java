@@ -2,9 +2,9 @@ package mate.academy.bookstore.service.impl;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import mate.academy.bookstore.dto.order.CreateOrderRequestDto;
 import mate.academy.bookstore.dto.order.OrderResponseDto;
@@ -65,11 +65,11 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public List<OrderResponseDto> findAllUserOrders(String email, Pageable pageable) {
-        return orderRepository.findByUser_Email(email, pageable).stream()
-                .map(orderMapper::toDto)
-                .toList();
+        List<Order> orders = orderRepository.findByUser_Email(email, pageable);
+        return orderMapper.toDtoList(orders);
     }
 
+    @Transactional
     @Override
     public void updateOrderStatus(Long id, UpdateOrderDto requestDto) {
         Order orderById = orderRepository.findById(id).orElseThrow(
@@ -80,9 +80,8 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public List<OrderItemDto> findAllItemsFromOrder(Long orderId, Pageable pageable) {
-        return orderItemRepository.findAllByOrder_Id(orderId, pageable).stream()
-                .map(orderItemMapper::toDto)
-                .toList();
+        List<OrderItem> orderItems = orderItemRepository.findAllByOrder_Id(orderId, pageable);
+        return orderItemMapper.toDtoList(orderItems);
     }
 
     @Override
@@ -93,22 +92,21 @@ public class OrderServiceImpl implements OrderService {
 
     private BigDecimal countTotal(Set<CartItem> cartItems) {
         return BigDecimal.valueOf(cartItems.stream()
-                .mapToDouble(ci ->
-                        ci.getQuantity() * ci.getBook().getPrice().doubleValue())
+                .mapToDouble(cartItem ->
+                        cartItem.getQuantity() * cartItem.getBook().getPrice().doubleValue())
                 .sum());
     }
 
     private Set<OrderItem> getOrderItemsFromCartItems(Order order, Set<CartItem> cartItems) {
-        Set<OrderItem> orderItems = new HashSet<>();
-
-        for (CartItem cartItem : cartItems) {
-            OrderItem orderItem = new OrderItem();
-            orderItem.setOrder(order);
-            orderItem.setBook(cartItem.getBook());
-            orderItem.setQuantity(cartItem.getQuantity());
-            orderItem.setPrice(cartItem.getBook().getPrice());
-            orderItems.add(orderItemRepository.save(orderItem));
-        }
-        return orderItems;
+        return cartItems.stream()
+                .map(cartItem -> {
+                    OrderItem orderItem = new OrderItem();
+                    orderItem.setOrder(order);
+                    orderItem.setBook(cartItem.getBook());
+                    orderItem.setQuantity(cartItem.getQuantity());
+                    orderItem.setPrice(cartItem.getBook().getPrice());
+                    return orderItemRepository.save(orderItem);
+                })
+                .collect(Collectors.toSet());
     }
 }

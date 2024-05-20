@@ -14,12 +14,12 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.Where;
+import org.hibernate.annotations.SQLRestriction;
 
 @Entity
 @Table(name = "cart_items")
 @SQLDelete(sql = "UPDATE cart_items SET is_deleted = TRUE WHERE id=?")
-@Where(clause = "is_deleted=FALSE")
+@SQLRestriction("is_deleted=FALSE")
 @Getter
 @Setter
 public class CartItem {
@@ -35,7 +35,7 @@ public class CartItem {
 
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
-    @ManyToOne (fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "book_id", nullable = false)
     private Book book;
 

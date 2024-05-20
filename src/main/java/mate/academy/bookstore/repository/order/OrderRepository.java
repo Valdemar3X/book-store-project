@@ -8,4 +8,3 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface OrderRepository extends JpaRepository<Order, Long> {
     List<Order> findByUser_Email(String email, Pageable pageable);
 }
-
