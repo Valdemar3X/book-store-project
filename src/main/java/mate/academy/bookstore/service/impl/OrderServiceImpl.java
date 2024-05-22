@@ -1,31 +1,22 @@
 package mate.academy.bookstore.service.impl;
 
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import mate.academy.bookstore.dto.order.CreateOrderRequestDto;
 import mate.academy.bookstore.dto.order.OrderResponseDto;
 import mate.academy.bookstore.dto.order.UpdateOrderDto;
 import mate.academy.bookstore.dto.orderitem.OrderItemDto;
 import mate.academy.bookstore.exception.EntityNotFoundException;
-import mate.academy.bookstore.mapper.CartItemMapper;
 import mate.academy.bookstore.mapper.OrderItemMapper;
 import mate.academy.bookstore.mapper.OrderMapper;
-import mate.academy.bookstore.mapper.ShoppingCartMapper;
-import mate.academy.bookstore.model.CartItem;
 import mate.academy.bookstore.model.Order;
 import mate.academy.bookstore.model.OrderItem;
 import mate.academy.bookstore.model.ShoppingCart;
-import mate.academy.bookstore.model.User;
 import mate.academy.bookstore.repository.order.OrderRepository;
 import mate.academy.bookstore.repository.orderitem.OrderItemRepository;
 import mate.academy.bookstore.repository.shopingcart.ShoppingCartRepository;
 import mate.academy.bookstore.service.OrderService;
 import mate.academy.bookstore.service.ShoppingCartService;
-import mate.academy.bookstore.service.UserService;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,28 +28,19 @@ public class OrderServiceImpl implements OrderService {
     private final OrderRepository orderRepository;
     private final OrderItemRepository orderItemRepository;
     private final ShoppingCartRepository shoppingCartRepository;
-    private final UserService userService;
     private final OrderMapper orderMapper;
-    private final ShoppingCartMapper shoppingCartMapper;
     private final OrderItemMapper orderItemMapper;
     private final Order order = new Order();
-    private final CartItemMapper cartItemMapper;
 
     @Override
     @Transactional
     public void createUserOrder(Long userId, CreateOrderRequestDto requestDto) {
         ShoppingCart shoppingCart = shoppingCartService.getShoppingCartModel(userId);
-        User user = userService.findById(userId);
-        order.setUser(user);
-        order.setStatus(Order.Status.PENDING);
-        order.setTotal(countTotal(shoppingCart.getCartItems()));
-        order.setTotal(BigDecimal.valueOf(100));
-        order.setOrderDate(LocalDateTime.now());
-        order.setShippingAddress(requestDto.shippingAddress());
-        Order savedOrder = orderRepository.save(order);
-        order.setOrderItems(getOrderItemsFromCartItems(savedOrder,
-                shoppingCart.getCartItems()));
-        orderRepository.save(savedOrder);
+        if (shoppingCart.getCartItems().isEmpty()) {
+            throw new EntityNotFoundException("Cart is empty for user: " + userId);
+        }
+        Order order = orderMapper.cartToOrder(shoppingCart, requestDto.shippingAddress());
+        orderRepository.save(order);
         shoppingCart.getCartItems().clear();
         shoppingCartRepository.save(shoppingCart);
     }
@@ -88,25 +70,5 @@ public class OrderServiceImpl implements OrderService {
     public OrderItemDto findOrderItemByOrderId(Long orderId, Long itemId) {
         return orderItemMapper.toDto(
                 orderItemRepository.findByOrder_IdAndId(orderId, itemId));
-    }
-
-    private BigDecimal countTotal(Set<CartItem> cartItems) {
-        return BigDecimal.valueOf(cartItems.stream()
-                .mapToDouble(cartItem ->
-                        cartItem.getQuantity() * cartItem.getBook().getPrice().doubleValue())
-                .sum());
-    }
-
-    private Set<OrderItem> getOrderItemsFromCartItems(Order order, Set<CartItem> cartItems) {
-        return cartItems.stream()
-                .map(cartItem -> {
-                    OrderItem orderItem = new OrderItem();
-                    orderItem.setOrder(order);
-                    orderItem.setBook(cartItem.getBook());
-                    orderItem.setQuantity(cartItem.getQuantity());
-                    orderItem.setPrice(cartItem.getBook().getPrice());
-                    return orderItemRepository.save(orderItem);
-                })
-                .collect(Collectors.toSet());
     }
 }

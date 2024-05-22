@@ -2,6 +2,7 @@ package mate.academy.bookstore.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import mate.academy.bookstore.dto.order.CreateOrderRequestDto;
@@ -10,7 +11,9 @@ import mate.academy.bookstore.dto.order.UpdateOrderDto;
 import mate.academy.bookstore.dto.orderitem.OrderItemDto;
 import mate.academy.bookstore.model.User;
 import mate.academy.bookstore.service.OrderService;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -34,7 +37,7 @@ public class OrderController {
     @PostMapping
     public void createUserOrder(
             Authentication authentication,
-            @RequestBody CreateOrderRequestDto requestDto) {
+            @RequestBody @Valid CreateOrderRequestDto requestDto) {
         User user = (User) authentication.getPrincipal();
         orderService.createUserOrder(user.getId(), requestDto);
     }
@@ -45,7 +48,7 @@ public class OrderController {
     @GetMapping
     public List<OrderResponseDto> findAllUserOrders(
             Authentication authentication,
-            Pageable pageable) {
+            @ParameterObject @PageableDefault(sort = "orderDate") Pageable pageable) {
         User user = (User) authentication.getPrincipal();
         return orderService.findAllUserOrders(user.getEmail(), pageable);
     }
@@ -56,7 +59,7 @@ public class OrderController {
     @PatchMapping("/{id}")
     public void updateOrderStatus(
             @PathVariable Long id,
-            @RequestBody UpdateOrderDto requestDto) {
+            @RequestBody @Valid UpdateOrderDto requestDto) {
         orderService.updateOrderStatus(id, requestDto);
     }
 
@@ -66,7 +69,7 @@ public class OrderController {
     @GetMapping("/{orderId}/items")
     public List<OrderItemDto> findAllItemsFromOrder(
             @PathVariable Long orderId,
-            Pageable pageable) {
+            @PageableDefault Pageable pageable) {
         return orderService.findAllItemsFromOrder(orderId, pageable);
     }
 
