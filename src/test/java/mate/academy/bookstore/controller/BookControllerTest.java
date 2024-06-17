@@ -9,12 +9,10 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Set;
 import javax.sql.DataSource;
 import lombok.SneakyThrows;
 import mate.academy.bookstore.dto.book.BookDto;
@@ -22,6 +20,7 @@ import mate.academy.bookstore.dto.book.BookSearchParametersDto;
 import mate.academy.bookstore.dto.book.CreateBookRequestDto;
 import mate.academy.bookstore.model.Book;
 import mate.academy.bookstore.model.Category;
+import mate.academy.bookstore.util.BookProvider;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -121,16 +120,9 @@ class BookControllerTest {
     @WithMockUser(username = "admin", roles = {"ADMIN"})
     void createBook_ValidRequestDto_Success() throws Exception {
         Category category = new Category().setId(TEST_ID).setName(CATEGORY_NAME);
-        CreateBookRequestDto requestDto = new CreateBookRequestDto()
-                .setTitle("Harry Potter").setAuthor("Joanne Rowling")
-                .setIsbn("4321").setPrice(new BigDecimal(10)).setCategoryIds(Set.of(TEST_ID));
+        CreateBookRequestDto requestDto = BookProvider.createRequestDto(TEST_ID);
 
-        Book expected = new Book()
-                .setTitle(requestDto.getTitle())
-                .setAuthor(requestDto.getAuthor())
-                .setIsbn(requestDto.getIsbn())
-                .setPrice(requestDto.getPrice())
-                .setCategories(Set.of(category));
+        Book expected = BookProvider.createBook(requestDto, category);
 
         String jsonRequest = objectMapper.writeValueAsString(requestDto);
 
@@ -189,17 +181,8 @@ class BookControllerTest {
     @WithMockUser(roles = "ADMIN")
     void updateById_WithValidId_ShouldReturnUpdatedBookDto() throws Exception {
         Category category = new Category().setId(TEST_ID).setName(CATEGORY_NAME);
-        CreateBookRequestDto requestDto = new CreateBookRequestDto()
-                .setTitle("Updated Book").setAuthor("Updated Author")
-                .setIsbn(TEST_BOOK_ISBN).setPrice(new BigDecimal(22))
-                .setCategoryIds(Set.of(TEST_ID));
-        Book expected = new Book()
-                .setId(TEST_ID)
-                .setTitle(requestDto.getTitle())
-                .setAuthor(requestDto.getAuthor())
-                .setIsbn(requestDto.getIsbn())
-                .setPrice(requestDto.getPrice())
-                .setCategories(Set.of(category));
+        CreateBookRequestDto requestDto = BookProvider.createRequestDtoForUpdate(TEST_ID);
+        Book expected = BookProvider.updateBook(requestDto, category);
 
         MvcResult result = mockMvc.perform(put("/books/{id}", 1)
                         .content(objectMapper.writeValueAsString(requestDto))

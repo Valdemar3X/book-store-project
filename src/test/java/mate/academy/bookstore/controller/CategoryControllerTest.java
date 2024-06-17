@@ -17,6 +17,7 @@ import javax.sql.DataSource;
 import lombok.SneakyThrows;
 import mate.academy.bookstore.dto.book.BookDtoWithoutCategoryIds;
 import mate.academy.bookstore.dto.category.CategoryDto;
+import mate.academy.bookstore.util.CategoryProvider;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -85,7 +86,7 @@ class CategoryControllerTest {
     @DisplayName("Create a new category")
     @WithMockUser(roles = "ADMIN")
     void createCategory_ValidRequestDto_Success() throws Exception {
-        CategoryDto categoryDto = new CategoryDto().setName("test");
+        CategoryDto categoryDto = CategoryProvider.createCategoryDto();
 
         String jsonRequest = objectMapper.writeValueAsString(categoryDto);
 
@@ -142,7 +143,7 @@ class CategoryControllerTest {
     @DisplayName("Update category by id")
     @WithMockUser(roles = "ADMIN")
     void updateById_WithValidCategoryId_ShouldReturnUpdatedCategoryDto() throws Exception {
-        CategoryDto categoryDto = new CategoryDto().setName("Updated Category");
+        CategoryDto categoryDto = CategoryProvider.updateCategoryDto();
 
         MvcResult result = mockMvc.perform(put("/categories/{id}", 1)
                         .content(objectMapper.writeValueAsString(categoryDto))
