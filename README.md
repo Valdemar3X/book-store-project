@@ -1,4 +1,5 @@
 ![Book Store](assets/book-store.png)
+
 [Watch the demo video](assets/demo.mp4)
 📝 Project description:
 This application was implemented for the operation of an online bookstore. The primary goal of the project is to provide users with a user-friendly platform to browse, select, and purchase books while offering administrators the tools necessary for efficient store management.
@@ -22,9 +23,9 @@ Role Division:
    Update order status to reflect stages such as "pending" or "delivered."
    📂 File Structure:
    .
-   ├── .github/workflows        
-   ├── .mvn/wrapper             
-   ├── src     # Source files
+   ├── .github/workflows
+   ├── .mvn/wrapper
+   ├── src   # Source files
    │   ├── main
    │   │   ├── java
    │   │   │   └── project
